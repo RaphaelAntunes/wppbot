@@ -4,12 +4,15 @@ export * from './2.js'
 export * from './3.js'
 export * from './4.js'
 export * from './5.js'
+export * from './6.js'
 
 export const STAGES = {
-  INICIAL: '0',
-  MENU: '1',
-  CARRINHO: '2',
-  RESUMO: '3',
-  PEDIDO: '4',
-  FALAR_COM_ATENDENTE: '5',
+  BEMVINDO: '0',
+  PUXADA: '1',
+  INICIACADASTRO: '2',
+  SALVANOME: '3',
+  SALVAEMAIL: '4',
+  COMPRAR: '5',
+  PERFIL: '6',
+
 }

@@ -3,20 +3,22 @@ import { storage } from '../storage.js'
 import { STAGES } from './index.js'
 
 export const finalStage = {
-  async exec({ from, message }) {
-    const msg = message.trim().toUpperCase()
+  async exec(params) {
 
-    const currentDate = new Date()
-    const history = storage[from].finalStage
+    const venombot = await VenomBot.getInstance()
+   
+    await sendMessageWithDelay(venombot, params.from,  'Hmm, seu teste acabou', 2000)
 
-    if (history.endsIn < currentDate.getTime() || msg === 'ENCERRAR') {
-      storage[from].stage = STAGES.INICIAL
-      return VenomBot.getInstance().sendText({
-        to: from,
-        message: '🔚 *Atendimento encerrado* 🔚',
-      })
-    }
-
-    storage[from].finalStage.endsIn = new Date().setSeconds(60) // more 1 minute of inactivity
+    
   },
-}
+  }
+  
+  async function sendMessageWithDelay(bot, to, message, delay) {
+    return new Promise(resolve => {
+      setTimeout(async () => {
+        await bot.sendText({ to, message });
+        resolve();
+      }, delay);
+    });
+  }
+  

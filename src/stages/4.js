@@ -1,29 +1,51 @@
 import { VenomBot } from '../venom.js'
+import { saveEmail } from '../database.js' 
+import { CadastrOK } from '../database.js' 
 import { storage } from '../storage.js'
 import { STAGES } from './index.js'
 
 export const stageFour = {
-  async exec({ from, message }) {
-    const address = storage[from].address
-    const phone = from.split('@')
+  async exec(params) {
+    const venombot = await VenomBot.getInstance();
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    storage[from].stage = STAGES.FALAR_COM_ATENDENTE
+    if(emailRegex.test(params.message)){
 
-    storage[from].finalStage = {
-      startsIn: new Date().getTime(),
-      endsIn: new Date().setSeconds(60), // 1 minute of inactivity
+      if(saveEmail(params.from,params.message)){
+        await CadastrOK(params.from);
+        const msg = `Você pode alterar seu perfil a qualquer momento com o comando
+
+*!perfil*`;
+      await sendMessageWithDelay(venombot, params.from, 'Obrigado, atrelei o e-mail (*'+params.message+'*) a seu perfil', 1000);
+      await sendMessageWithDelay(venombot, params.from, msg, 1000);
+      await sendMessageWithDelay(venombot, params.from, ' Digite uma *PLACA* e eu te mostro o detalhamento sobre o Veículo:', 1000);
+      storage[params.from].stage = STAGES.BEMVINDO
+
+      }else{
+        await sendMessageWithDelay(venombot, params.from, 'Houve um problema, tente novamente mais tarde!', 1000);
+
+      }
+
+     
+
+    }else{
+      await sendMessageWithDelay(venombot, params.from, 'O email digitado não é válido. Digite um e-mail válido', 1000);
+
     }
 
-    const itens = storage[from].itens
-    const desserts = itens.map((item) => item.description).join(', ')
-    const total = storage[from].itens.length
 
-    const msg = `🔔 *NOVO PEDIDO* 🔔: \n\n📞 Cliente: +${
-      phone[0]
-    } \n🧁 Sabores: *${desserts}* \n📍 Endereço: *${address}* \n🚚 Taxa de entrega: *a confirmar*. \n💰 Valor dos bolos: *${
-      total * 6
-    },00 reais*. \n⏳ Tempo de entrega: *50 minutos*. \n🛑 Detalhes: *${message}*`
-
-    await VenomBot.getInstance().sendText({ to: from, message: msg })
   },
+};
+
+
+
+
+
+async function sendMessageWithDelay(bot, to, message, delay) {
+  return new Promise(resolve => {
+    setTimeout(async () => {
+      await bot.sendText({ to, message });
+      resolve();
+    }, delay);
+  });
 }

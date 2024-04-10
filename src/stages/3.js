@@ -1,30 +1,30 @@
 import { VenomBot } from '../venom.js'
 import { storage } from '../storage.js'
 import { STAGES } from './index.js'
+import { saveName } from '../database.js' // Supondo que você tenha um arquivo database.js com funções para interagir com o banco de dados
 
 export const stageThree = {
-  async exec({ from, message }) {
-    storage[from].address = message
-    storage[from].stage = STAGES.PEDIDO
+  async exec(params) {
 
-    let msg = 'Pedido *CANCELADO* com sucesso. \n Volte Sempre!'
-    if (message === '*') {
-      storage[from].stage = STAGES.INICIAL
-    } else {
-      const itens = storage[from].itens
-      const desserts = itens.map((item) => item.description).join(', ')
+  const venombot = await VenomBot.getInstance()
+ 
+  if(saveName(params.from,params.message)){
+    await sendMessageWithDelay(venombot, params.from,  'Certo, vou te achamar de: *'+params.message+'* 🪪', 2000)
+    await sendMessageWithDelay(venombot, params.from,  'Me informa seu endereço de *e-mail*', 1000)
+    storage[params.from].stage = STAGES.SALVAEMAIL
+  
+  }else{
+    await sendMessageWithDelay(venombot, params.from, 'Houve um problema, tente novamente mais tarde!', 1000);
+  }
+  
+},
+}
 
-      const total = storage[from].itens.length
-
-      msg =
-        `🗒️ *RESUMO DO PEDIDO*: \n\n🧁 Sabores: *${desserts}* \n🚚 Taxa de entrega: *a confirmar*. \n📍 Endereço: *${message}* \n💰 Valor dos bolos: *${
-          total * 6
-        },00 reais*. \n⏳ Tempo de entrega: *50 minutos*. \n\n` +
-        '🔊 ```Agora, informe a forma de pagamento e se vai precisar de troco, por gentileza.```'
-    }
-
-    await VenomBot.getInstance().sendText({ to: from, message: msg })
-
-    // return '✅ *Prontinho, pedido feito!* \n\nAgora, se você ainda não sabe o valor da taxa de entrega para sua região, vou te passar para um atendente para que ele verique o valor da *taxa de entrega*. \n\n⏳ *Aguarde um instante*.'
-  },
+async function sendMessageWithDelay(bot, to, message, delay) {
+  return new Promise(resolve => {
+    setTimeout(async () => {
+      await bot.sendText({ to, message });
+      resolve();
+    }, delay);
+  });
 }
