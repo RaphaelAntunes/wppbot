@@ -1,8 +1,6 @@
 import { VenomBot } from '../venom.js'
-import { menu } from '../menu.js'
 import { storage } from '../storage.js'
 import { STAGES } from './index.js'
-import { stages, getStage } from '../stages.js'
 
 export const stageTwo = {
   async exec(params) {
@@ -18,7 +16,7 @@ Qual seu *Nome* ? *Apelido*, ou como gostaria de ser *Chamado* ?`
  await sendMessageWithDelay(venombot, params.from, message1)
  await sendMessageWithDelay(venombot, params.from, message2, 2000)
  await sendMessageWithDelay(venombot, params.from, message3)  
- storage[params.from].stage = STAGES.SALVANOME
+ storage[params.from].stage = STAGES.SALVANOME 
 
 },
 }

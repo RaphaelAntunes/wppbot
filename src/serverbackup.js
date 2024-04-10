@@ -15,8 +15,8 @@ const main = async () => {
 
       const currentStage = getStage({ from: message.from })
       console.log(currentStage);
+      // Busca se já é usuario
       const isClient = await getPhoneNumberInfo(message.from);
-      
       if (isClient) {
 
         if(message.body == "!perfil" || message.body == "perfil"){
@@ -27,8 +27,10 @@ const main = async () => {
           return
         }
 
-        
-         if (isClient.vip == 1) {
+        if (currentStage == 0) {
+
+          // SE FOR VIP 
+          if (isClient.vip == 1) {
             await stages[1].stage.exec({
               from: message.from,
               message: message.body,
@@ -38,18 +40,10 @@ const main = async () => {
             if (isClient.cadastro == 0 && isClient.qtdconsultas >= 1) {
               // SE NÃO TIVER CADASTRADO NOME NEM EMAIL MANDA PRO CADASTRO GERAL
               if (isClient.nome == null && isClient.email == null) {
-                if(currentStage == 3){
-                  await stages[3].stage.exec({
-                    from: message.from,
-                    message: message.body,
-                  })
-                }else{
-                  await stages[2].stage.exec({
-                    from: message.from,
-                    message: message.body,
-                  })
-                }
-                
+                await stages[2].stage.exec({
+                  from: message.from,
+                  message: message.body,
+                })
               }
               // SE TIVER CADASTRADO NOME E NÃO EMAIL MANDA PRO CADASTRO EMAIL
               else if (isClient.nome != null) {
@@ -66,7 +60,7 @@ const main = async () => {
               }
 
             } else {
-              if(isClient.qtdconsultas >=3){
+              if(isClient.qtdconsultas >=300){
                 await stages[5].stage.exec({
                   from: message.from,
                   message: message.body,
@@ -80,15 +74,21 @@ const main = async () => {
             }
           }
 
+        } else {
+          await stages[currentStage].stage.exec({
+            from: message.from,
+            message: message.body,
+          })
+        }
       }
       else {
         // Se não for salvao numero e começa pelo estagio 0
+        await savePhoneNumber(message.from)
         await stages[currentStage].stage.exec({
           from: message.from,
           message: message.body,
         })
       }
-     
 
 
     })

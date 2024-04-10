@@ -173,7 +173,7 @@ export const stageOne = {
           } catch (error) {
             console.error('Erro ao obter token:', error);
             // Tratar caso de erro na requisição
-            await VenomBot.getInstance().sendText({ to: params.from, message: 'Ocorreu um erro ao obter as informações.' });
+            await VenomBot.getInstance().sendText({ to: params.from, message: '❌ Esse veículo não pertence ao RN ou a *PLACA* não existe' });
           }
         }else{
           await VenomBot.getInstance().sendText({ to: params.from, message: 'Insira uma PLACA VALIDA' });

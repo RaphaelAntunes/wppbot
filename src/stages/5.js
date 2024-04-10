@@ -1,6 +1,4 @@
 import { VenomBot } from '../venom.js'
-import { storage } from '../storage.js'
-import { STAGES } from './index.js'
 
 export const finalStage = {
   async exec(params) {
