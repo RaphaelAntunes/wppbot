@@ -1,6 +1,8 @@
 import { VenomBot } from '../venom.js'
 import { saveEmail } from '../database.js' 
 import { CadastrOK } from '../database.js' 
+import { stages, getStage } from '../stages.js'
+
 import { storage } from '../storage.js'
 import { STAGES } from './index.js'
 
@@ -18,9 +20,10 @@ export const stageFour = {
 *!perfil*`;
       await sendMessageWithDelay(venombot, params.from, 'Obrigado, atrelei o e-mail (*'+params.message+'*) a seu perfil', 1000);
       await sendMessageWithDelay(venombot, params.from, msg, 1000);
-      await sendMessageWithDelay(venombot, params.from, ' Digite uma *PLACA* e eu te mostro o detalhamento sobre o Veículo:', 1000);
-      storage[params.from].stage = STAGES.PUXADA
-
+      await stages[1].stage.exec({
+        from: params.from,
+        message: storage['lastplaca'] ,
+      })
       }else{
         await sendMessageWithDelay(venombot, params.from, 'Houve um problema, tente novamente mais tarde!', 1000);
 

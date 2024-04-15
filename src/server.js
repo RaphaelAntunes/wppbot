@@ -66,7 +66,7 @@ const main = async () => {
               }
 
             } else {
-              if(isClient.qtdconsultas >=3){
+              if(isClient.qtdconsultas >=30){
                 await stages[5].stage.exec({
                   from: message.from,
                   message: message.body,
